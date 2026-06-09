@@ -181,9 +181,33 @@ function App() {
           <NavButton active={activeTab === 'pending'} icon={<Briefcase size={18} />} text="Opportunities" badge={pendingJobs.length} onClick={() => setActiveTab('pending')} />
           <NavButton active={activeTab === 'applied'} icon={<CheckSquare size={18} />} text="Applications" onClick={() => setActiveTab('applied')} />
           <NavButton active={activeTab === 'config'} icon={<Activity size={18} />} text="Pipeline" onClick={() => setActiveTab('config')} />
+          
+          <div className="my-2 border-t border-slate-100 mx-2" />
+          
+          <a 
+            href="https://vercel.com/manans-projects-38b4f0e7/resumo" 
+            target="_blank" 
+            rel="noreferrer"
+            className="group relative w-full flex flex-col px-4 py-3 rounded-xl transition-all duration-500 font-medium text-slate-500 hover:bg-slate-900 overflow-hidden border border-transparent hover:border-slate-800 hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+          >
+            <div className="flex items-center gap-3 relative z-10 transition-transform duration-300 group-hover:-translate-y-0.5">
+              <div className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                <ExternalLink size={18} />
+              </div>
+              <span className="text-sm font-bold flex tracking-tight">
+                <span className="group-hover:text-white transition-colors duration-300">Resum</span>
+                <span className="group-hover:text-red-500 transition-colors duration-300">O</span>
+              </span>
+            </div>
+            <div className="relative z-10 h-0 group-hover:h-8 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
+              <span className="text-[10px] text-slate-300 leading-tight block">
+                Check if your resume is ready for your dream job →
+              </span>
+            </div>
+          </a>
         </nav>
 
-        <div className="p-6 mt-auto border-t border-slate-100">
+        <div className="p-6 mt-auto border-t border-slate-100 flex flex-col gap-4">
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
             <div className="flex items-center gap-2 mb-1">
               <div className={`w-2 h-2 rounded-full ${systemStatus.status === 'RUNNING' ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300'}`} />
@@ -193,6 +217,25 @@ function App() {
             </div>
             <div className="text-xs text-slate-500 ml-4">
               Sync: {systemStatus.timestamp ? new Date(systemStatus.timestamp).toLocaleTimeString() : 'N/A'}
+            </div>
+          </div>
+
+          <div className="bg-slate-900 rounded-xl p-5 text-white shadow-xl relative overflow-hidden group border border-slate-800">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Developer Details</h4>
+              <p className="text-[11px] text-indigo-300 font-semibold mb-4 leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
+              
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-2 items-start">
+                  <span className="text-fuchsia-400 text-xs mt-0.5">🏆</span>
+                  <p className="text-[10px] text-slate-300 leading-snug font-medium">Awarded CVSPK Scholarship for 6th rank in IT Dept (2024–25)</p>
+                </div>
+                <div className="flex gap-2 items-start">
+                  <span className="text-emerald-400 text-xs mt-0.5">🏅</span>
+                  <p className="text-[10px] text-slate-300 leading-snug font-medium">Winner, Smart India Hackathon 22-23 (Rs. 25K prize, 300+ teams)</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
