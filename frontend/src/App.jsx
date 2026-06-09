@@ -194,18 +194,23 @@ function App() {
             rel="noreferrer"
             className="group relative w-full flex flex-col px-4 py-3 rounded-xl transition-all duration-500 font-medium text-slate-500 hover:bg-slate-900 overflow-hidden border border-transparent hover:border-slate-800 hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
           >
-            <div className="flex items-center gap-3 relative z-10 transition-transform duration-300 group-hover:-translate-y-0.5">
-              <div className="text-slate-400 group-hover:text-white transition-colors duration-300">
-                <ExternalLink size={18} />
+            <div className="flex items-center justify-between relative z-10 transition-transform duration-300 group-hover:-translate-y-0.5 w-full">
+              <div className="flex items-center gap-3">
+                <div className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                  <ExternalLink size={18} />
+                </div>
+                <span className="text-sm font-bold flex tracking-tight">
+                  <span className="group-hover:text-white transition-colors duration-300">Resum</span>
+                  <span className="group-hover:text-red-500 transition-colors duration-300">O</span>
+                </span>
               </div>
-              <span className="text-sm font-bold flex tracking-tight">
-                <span className="group-hover:text-white transition-colors duration-300">Resum</span>
-                <span className="group-hover:text-red-500 transition-colors duration-300">O</span>
+              <span className="text-[8px] uppercase tracking-widest text-indigo-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                Built by same dev
               </span>
             </div>
-            <div className="relative z-10 h-0 group-hover:h-10 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
+            <div className="relative z-10 h-0 group-hover:h-8 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
               <span className="text-[10px] text-slate-300 leading-tight block">
-                Check if your resume is ready for your dream job. <br/><strong className="text-white">TRY! Built by the same dev</strong>
+                Check if your resume is ready for your dream job
               </span>
             </div>
           </a>
