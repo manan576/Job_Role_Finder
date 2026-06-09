@@ -87,8 +87,18 @@ While we could have used the raw Google GenAI SDK, **LangChain** was chosen for 
 - **Why chosen:** When passing raw DOM text (which contains massive amounts of inline CSS, links, and text), you need a model with a **massive context window**. Gemini 2.5 Flash provides a 1M+ token context window, parses it natively at incredibly fast speeds ("Flash"), and is extremely cost-effective for large-scale ingestion.
 - **Alternatives rejected:** 
   - **GPT-4o:** Excellent reasoning, but significantly more expensive to run daily on massive HTML strings.
-  - **Claude 3.5 Sonnet:** Incredible for coding, but slightly higher latency and cost than Gemini Flash for simple data extraction.
   - **Open-source (Llama 3 70B):** Would require setting up dedicated GPU compute nodes (e.g., RunPod, AWS EC2), defeating the serverless, zero-maintenance goal of the project.
+
+---
+
+## 📊 Observability & Monitoring
+
+A core tenet of this pipeline is that it must run autonomously without silent failures. We built strict observability into the architecture:
+
+1. **System Telemetry (Heartbeats):** Every time the GitHub Action fires, it creates a new record in the PostgreSQL `runs` table with a `RUNNING` status and a timestamp. When the extraction completes, it updates to `COMPLETED`. 
+2. **Dashboard Integration:** The React frontend subscribes to this `runs` table. A pulsing indicator in the bottom-left of the sidebar immediately visually tells the user if the backend is currently actively extracting data or if it is idle, along with the timestamp of the last successful sync.
+3. **Push Alerting:** We do not rely on the user manually checking the dashboard. The Python orchestrator natively integrates with a **Slack Incoming Webhook**, pushing formatted Markdown summaries of newly discovered jobs directly to the user's mobile device the second they are found.
+4. **Future Tracing Integration:** To scale observability further, we plan to integrate **LangSmith** to monitor LLM token consumption/costs per run, and **Sentry** to capture stack traces if Playwright fails to load a specific DOM.
 
 ---
 
