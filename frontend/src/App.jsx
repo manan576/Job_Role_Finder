@@ -203,9 +203,9 @@ function App() {
                 <span className="group-hover:text-red-500 transition-colors duration-300">O</span>
               </span>
             </div>
-            <div className="relative z-10 h-0 group-hover:h-8 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
+            <div className="relative z-10 h-0 group-hover:h-10 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
               <span className="text-[10px] text-slate-300 leading-tight block">
-                Check if your resume is ready for your dream job
+                Check if your resume is ready for your dream job. <br/><strong className="text-white">TRY! Built by the same dev</strong>
               </span>
             </div>
           </a>
