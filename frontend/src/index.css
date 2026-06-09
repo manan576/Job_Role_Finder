@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-50 font-sans antialiased overflow-hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 shadow-2xl;
+}
+
+/* Animated gradient background */
+.bg-gradient-animated {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.1) 30%, transparent 70%);
+  animation: rotate 60s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
