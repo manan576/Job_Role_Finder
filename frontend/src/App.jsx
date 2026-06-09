@@ -279,18 +279,25 @@ function App() {
                       </div>
                       <ul className="flex flex-col gap-3">
                         {pipelineConfig.targets.map((site, idx) => {
-                          const domain = new URL(site.url).hostname.replace('www.', '').replace('jobs.', '').replace('careers.', '');
+                          let logoUrl = null;
+                          try {
+                            const domain = new URL(site.url).hostname.replace('www.', '').replace('jobs.', '').replace('careers.', '');
+                            logoUrl = `https://logo.clearbit.com/${domain}`;
+                          } catch(e) {
+                            const guessedDomain = site.company.toLowerCase().replace(/\s+/g, '') + '.com';
+                            logoUrl = `https://logo.clearbit.com/${guessedDomain}`;
+                          }
                           return (
-                            <li key={idx} className="flex items-center gap-4 bg-slate-50 hover:bg-white hover:shadow-md p-4 rounded-xl border border-slate-200 transition-all duration-300 group/item cursor-pointer">
-                              <img src={`https://logo.clearbit.com/${domain}`} alt={site.company} className="w-8 h-8 rounded-full bg-white border border-slate-200 object-contain p-0.5" onError={(e) => { e.target.style.display = 'none'; }} />
+                            <a href={site.url.startsWith('http') ? site.url : `https://${site.url}`} target="_blank" rel="noreferrer" key={idx} className="flex items-center gap-4 bg-slate-50 hover:bg-white hover:shadow-md p-4 rounded-xl border border-slate-200 transition-all duration-300 group/item cursor-pointer">
+                              <img src={logoUrl} alt={site.company} className="w-8 h-8 rounded-full bg-white border border-slate-200 object-contain p-0.5" onError={(e) => { e.target.style.display = 'none'; }} />
                               <div className="flex flex-col truncate flex-1">
                                 <span className="font-semibold text-slate-900 group-hover/item:text-fuchsia-600 transition-colors">{site.company}</span>
-                                <a href={site.url} target="_blank" rel="noreferrer" className="text-xs text-slate-500 hover:text-slate-700 truncate transition-colors">
+                                <span className="text-xs text-slate-500 group-hover/item:text-slate-700 truncate transition-colors">
                                   {site.url}
-                                </a>
+                                </span>
                               </div>
                               <ExternalLink size={18} className="text-slate-300 group-hover/item:text-fuchsia-500 transition-colors transform group-hover/item:translate-x-1" />
-                            </li>
+                            </a>
                           );
                         })}
                       </ul>
