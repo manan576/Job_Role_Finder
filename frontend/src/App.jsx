@@ -170,15 +170,18 @@ function App() {
       </AnimatePresence>
       
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-slate-200 flex flex-col z-10">
-        <div className="p-8 flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-            <Command className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold tracking-tight text-xl text-slate-900">Nexus</span>
-        </div>
-
-        <nav className="flex flex-col gap-1 px-4 flex-grow">
+      <aside className="w-72 bg-white border-r border-slate-200 flex flex-col z-20 shadow-sm relative h-screen">
+        <div className="flex flex-col h-full overflow-y-auto">
+          <div className="p-6 flex-shrink-0">
+            <div className="flex items-center gap-3 px-2">
+              <div className="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20">
+                <Building2 size={24} className="text-white" />
+              </div>
+              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 tracking-tight">Nexus</h1>
+            </div>
+          </div>   
+          
+          <nav className="flex flex-col gap-1 px-4 flex-shrink-0">
           <NavButton active={activeTab === 'pending'} icon={<Briefcase size={18} />} text="Opportunities" badge={pendingJobs.length} onClick={() => setActiveTab('pending')} />
           <NavButton active={activeTab === 'applied'} icon={<CheckSquare size={18} />} text="Applications" onClick={() => setActiveTab('applied')} />
           <NavButton active={activeTab === 'config'} icon={<Activity size={18} />} text="Pipeline" onClick={() => setActiveTab('config')} />
@@ -208,7 +211,7 @@ function App() {
           </a>
         </nav>
 
-        <div className="p-6 mt-auto border-t border-slate-100 flex flex-col gap-4">
+        <div className="p-6 mt-auto border-t border-slate-100 flex flex-col gap-4 flex-shrink-0">
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
             <div className="flex items-center gap-2 mb-1">
               <div className={`w-2 h-2 rounded-full ${systemStatus.status === 'RUNNING' ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300'}`} />
@@ -231,8 +234,8 @@ function App() {
                   <p className="text-sm font-bold text-slate-900 leading-tight">Manan Bhateja</p>
                   <p className="text-xs text-slate-500 font-medium">NSUT IT 2027</p>
                 </div>
-                <a href="https://github.com/manan576" target="_blank" rel="noreferrer" className="text-slate-400 hover:text-slate-900 transition-colors z-20">
-                  <Github size={18} />
+                <a href="https://github.com/manan576" target="_blank" rel="noreferrer" className="text-slate-700 bg-slate-100 hover:bg-indigo-100 hover:text-indigo-700 p-1.5 rounded-lg transition-colors border border-slate-200 hover:border-indigo-200 shadow-sm">
+                  <Github size={16} />
                 </a>
               </div>
               
