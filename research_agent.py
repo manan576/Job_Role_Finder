@@ -155,59 +155,65 @@ async def run_scraper():
         return parse_jobs(result.content, company_name, run_id)
 
     all_new_jobs = []
+    run_status = "COMPLETED"
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context()
-        page = await context.new_page()
-        
-        for site in TARGET_SITES:
-            try:
-                new_jobs = await extract_jobs(page, site["company"], site["url"])
-                if new_jobs:
-                    all_new_jobs.extend(new_jobs)
-            except Exception as e:
-                print(f"Failed to scrape {site['company']}: {e}")
+    try:
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context()
+            page = await context.new_page()
             
-            print("Waiting 60 seconds to respect API rate limits...")
-            await asyncio.sleep(60)
-            
-        await browser.close()
+            for site in TARGET_SITES:
+                try:
+                    new_jobs = await extract_jobs(page, site["company"], site["url"])
+                    if new_jobs:
+                        all_new_jobs.extend(new_jobs)
+                except Exception as e:
+                    print(f"Failed to scrape {site['company']}: {e}")
+                
+                print("Waiting 60 seconds to respect API rate limits...")
+                await asyncio.sleep(60)
+                
+            await browser.close()
+    except Exception as fatal_error:
+        print(f"Fatal pipeline error: {fatal_error}")
+        run_status = "FAILED"
+    finally:
+        # Mark run as completed or failed
+        db = SessionLocal()
+        current_run = db.query(Run).filter(Run.id == run_id).first()
+        if current_run:
+            current_run.status = run_status
+            db.commit()
+        db.close()
         
-    # Mark run as completed
-    db = SessionLocal()
-    current_run = db.query(Run).filter(Run.id == run_id).first()
-    if current_run:
-        current_run.status = "COMPLETED"
-        db.commit()
-    db.close()
-    
-    print("Scraping completed!")
+    print(f"Scraping finished with status: {run_status}")
 
-    # Fire Slack Webhook Alert if new jobs found
-    if all_new_jobs:
+    # Fire Slack Webhook Alert if new jobs found or if fatal failure
+    webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+    if webhook_url:
         try:
             import requests
-            webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
-            
-            if webhook_url:
+            if run_status == "FAILED":
+                payload = {"text": "🚨 *CRITICAL ALERT:* Nexus Pipeline encountered a fatal crash during execution. Please check GitHub Action Logs."}
+                requests.post(webhook_url, json=payload)
+                print("Sent failure alert to Slack.")
+                
+            elif all_new_jobs:
                 message = f"*🤖 JobTracker found {len(all_new_jobs)} new tech roles!*\n\n"
                 for j in all_new_jobs:
                     message += f"• *{j['company']}*: <{j['url']}|{j['title']}>\n"
                 
-                payload = {
-                    "text": message
-                }
-                
+                payload = {"text": message}
                 response = requests.post(webhook_url, json=payload)
                 if response.status_code == 200:
                     print("Slack webhook alert sent successfully!")
                 else:
                     print(f"Failed to send Slack alert. Status code: {response.status_code}")
-            else:
-                print("Skipping alert: SLACK_WEBHOOK_URL not set.")
         except Exception as e:
             print(f"Failed to send webhook alert: {e}")
+    else:
+        print("Skipping alert: SLACK_WEBHOOK_URL not set.")
 
 if __name__ == "__main__":
     asyncio.run(run_scraper())

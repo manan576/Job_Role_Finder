@@ -102,6 +102,17 @@ A core tenet of this pipeline is that it must run autonomously without silent fa
 
 ---
 
+## 🛡️ Fault Tolerance & Resilience
+
+When scraping the web, failure is inevitable (websites change, Cloudflare blocks you, DOMs timeout). The pipeline is explicitly designed to handle failures gracefully:
+
+1. **Component-Level Isolation:** Inside the Python orchestrator, the Playwright extraction loop is wrapped in a `try-except` block per company. If the Apple career page throws a timeout, the pipeline simply catches the error, logs it, and continues to the Amazon career page without crashing the entire script.
+2. **Global Catastrophic Failure Handling:** If a catastrophic fatal error occurs (e.g., out of memory, complete network failure), a global `finally` block catches it. It immediately updates the PostgreSQL `runs` telemetry status to `FAILED` (so the React UI knows the system crashed and isn't stuck "RUNNING" forever).
+3. **Dead-Letter Alerting:** In the event of a fatal failure, the pipeline fires a critical `🚨 CRITICAL ALERT` push notification to the Slack Webhook to wake up an engineer.
+4. **GitHub Action Redundancy:** Even if the Python script crashes completely, GitHub Actions acts as the ultimate wrapper. It will mark the workflow as failed and send an email to the repository owner.
+
+---
+
 ## 🚀 Scaling the System (System Design Interview Prep)
 
 If an interviewer asks: *"How would you scale this to scrape 10,000 companies every hour?"*
