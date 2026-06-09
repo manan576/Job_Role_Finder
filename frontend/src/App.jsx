@@ -251,7 +251,7 @@ function App() {
               </>
             ) : (
               <button onClick={() => setShowLoginModal(true)} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full transition-colors text-sm font-semibold">
-                <ShieldCheck size={16} /> Admin Access
+                <ShieldCheck size={16} /> Login
               </button>
             )}
           </div>
