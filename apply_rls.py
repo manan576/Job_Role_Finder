@@ -14,6 +14,7 @@ with engine.connect() as conn:
     # Enable RLS
     conn.execute(text("ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;"))
     conn.execute(text("ALTER TABLE runs ENABLE ROW LEVEL SECURITY;"))
+    conn.execute(text("ALTER TABLE system_configs ENABLE ROW LEVEL SECURITY;"))
     
     # Drop existing policies if any to prevent errors
     # Drop existing policies if any to prevent errors
@@ -22,6 +23,7 @@ with engine.connect() as conn:
         conn.execute(text("DROP POLICY IF EXISTS \"Allow authenticated access\" ON runs;"))
         conn.execute(text("DROP POLICY IF EXISTS \"Allow public read\" ON jobs;"))
         conn.execute(text("DROP POLICY IF EXISTS \"Allow public read\" ON runs;"))
+        conn.execute(text("DROP POLICY IF EXISTS \"Allow public read\" ON system_configs;"))
         conn.execute(text("DROP POLICY IF EXISTS \"Allow authenticated write\" ON jobs;"))
         conn.execute(text("DROP POLICY IF EXISTS \"Allow authenticated write\" ON runs;"))
         conn.execute(text("DROP POLICY IF EXISTS \"Allow auth insert\" ON jobs;"))
@@ -36,6 +38,7 @@ with engine.connect() as conn:
     # Create policies for Public Read
     conn.execute(text("CREATE POLICY \"Allow public read\" ON jobs FOR SELECT USING (true);"))
     conn.execute(text("CREATE POLICY \"Allow public read\" ON runs FOR SELECT USING (true);"))
+    conn.execute(text("CREATE POLICY \"Allow public read\" ON system_configs FOR SELECT USING (true);"))
 
     # Create policies for Authenticated Write (INSERT, UPDATE, DELETE)
     conn.execute(text("CREATE POLICY \"Allow auth insert\" ON jobs FOR INSERT TO authenticated WITH CHECK (true);"))

@@ -25,3 +25,12 @@ class Job(Base):
     run_id = Column(Integer, ForeignKey("runs.id"))
 
     run = relationship("Run", back_populates="jobs")
+
+
+class SystemConfig(Base):
+    __tablename__ = "system_configs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    prompt_text = Column(String, nullable=False)
+    target_sites = Column(String, nullable=False) # JSON encoded string
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

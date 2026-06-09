@@ -7,9 +7,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_core.prompts import PromptTemplate
 
+import json
 # SQLAlchemy Imports
 from database import SessionLocal, engine, Base
-from models import Run, Job
+from models import Run, Job, SystemConfig
 from sqlalchemy.exc import IntegrityError
 
 # Load environment variables
@@ -42,6 +43,31 @@ TARGET_SITES = [
     }
 ]
 
+PROMPT_STRING = """You are an expert technical recruiter and a strict gatekeeper extracting job information from webpage text.
+
+Your task is to extract ONLY roles that strictly meet ALL the following MUST INCLUDE criteria, while strictly filtering out ANY roles that meet the MUST REJECT criteria.
+
+MUST INCLUDE:
+1. The job or internship MUST be based in India.
+2. The job or internship MUST be tech-related (e.g., Software Engineering, AI/ML, Fleet Engineering, Data Analyst, Infrastructure Engineering, etc.).
+3. The target audience MUST strictly be 'Freshers' (Bachelors degree in Computer Science or related, 0 to 1 year of experience, no experience, or Internship).
+
+MUST REJECT:
+Explicitly ignore and reject any job posting that mentions requiring ANY of the following:
+- A 'PhD' or 'Master's Degree'
+- 'Senior', 'Lead', 'Manager', 'Staff', or 'Principal' in the title
+- '2+ years of experience' or more
+
+Here is the raw text and link data scraped from the careers page:
+{page_text}
+
+Please return the job titles and their direct application URLs for ONLY the matching roles. Format your response clearly as a list:
+- [Job Title] - [URL]
+
+If you do not find ANY roles that perfectly match the criteria on this page, simply output: "No suitable entry-level tech roles found for India on this page."
+Do not output any JSON or formatting other than the list. Do not include any roles that were rejected."""
+
+
 def parse_jobs(content: str, company: str, run_id: int):
     """Parse the LLM response to extract jobs and insert into DB via SQLAlchemy."""
     pattern = re.compile(r"^-\s+(.*?)\s+-\s+(https?://[^\s]+)", re.MULTILINE)
@@ -70,8 +96,19 @@ def parse_jobs(content: str, company: str, run_id: int):
     return new_jobs
 
 async def run_scraper():
-    # Record the start of a run
     db = SessionLocal()
+    
+    # Sync Configuration to Database (Single Source of Truth)
+    config = db.query(SystemConfig).filter(SystemConfig.id == 1).first()
+    if config:
+        config.prompt_text = PROMPT_STRING
+        config.target_sites = json.dumps(TARGET_SITES)
+    else:
+        config = SystemConfig(id=1, prompt_text=PROMPT_STRING, target_sites=json.dumps(TARGET_SITES))
+        db.add(config)
+    db.commit()
+
+    # Record the start of a run
     new_run = Run(status="RUNNING")
     db.add(new_run)
     db.commit()
@@ -92,32 +129,7 @@ async def run_scraper():
         temperature=0.0
     )
 
-    prompt_template = PromptTemplate.from_template(
-        """You are an expert technical recruiter and a strict gatekeeper extracting job information from webpage text.
-        
-        Your task is to extract ONLY roles that strictly meet ALL the following MUST INCLUDE criteria, while strictly filtering out ANY roles that meet the MUST REJECT criteria.
-        
-        MUST INCLUDE:
-        1. The job or internship MUST be based in India.
-        2. The job or internship MUST be tech-related (e.g., Software Engineering, AI/ML, Fleet Engineering, Data Analyst, Infrastructure Engineering, etc.).
-        3. The target audience MUST strictly be 'Freshers' (Bachelors degree in Computer Science or related, 0 to 1 year of experience, no experience, or Internship).
-        
-        MUST REJECT:
-        Explicitly ignore and reject any job posting that mentions requiring ANY of the following:
-        - A 'PhD' or 'Master's Degree'
-        - 'Senior', 'Lead', 'Manager', 'Staff', or 'Principal' in the title
-        - '2+ years of experience' or more
-        
-        Here is the raw text and link data scraped from the careers page:
-        {page_text}
-        
-        Please return the job titles and their direct application URLs for ONLY the matching roles. Format your response clearly as a list:
-        - [Job Title] - [URL]
-        
-        If you do not find ANY roles that perfectly match the criteria on this page, simply output: "No suitable entry-level tech roles found for India on this page."
-        Do not output any JSON or formatting other than the list. Do not include any roles that were rejected.
-        """
-    )
+    prompt_template = PromptTemplate.from_template(PROMPT_STRING)
 
     chain = prompt_template | llm
 

@@ -11,6 +11,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [jobs, setJobs] = useState([]);
   const [systemStatus, setSystemStatus] = useState({ status: 'IDLE', timestamp: null });
+  const [pipelineConfig, setPipelineConfig] = useState(null);
   const [isConfigured, setIsConfigured] = useState(false);
   const [session, setSession] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -41,6 +42,7 @@ function App() {
   useEffect(() => {
     fetchJobs();
     fetchStatus();
+    fetchConfig();
     
     const jobsInterval = setInterval(fetchJobs, 15000);
     const statusInterval = setInterval(fetchStatus, 15000);
@@ -80,6 +82,26 @@ function App() {
       }
     } catch (e) {
       console.error('Failed to fetch status:', e.message);
+    }
+  };
+
+  const fetchConfig = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('system_configs')
+        .select('*')
+        .eq('id', 1)
+        .single();
+        
+      if (error && error.code !== 'PGRST116') throw error;
+      if (data) {
+        setPipelineConfig({
+          prompt: data.prompt_text,
+          targets: JSON.parse(data.target_sites)
+        });
+      }
+    } catch (e) {
+      console.error('Failed to fetch config:', e.message);
     }
   };
 
@@ -355,45 +377,43 @@ function App() {
                     exit={{ opacity: 0, y: -10 }}
                     className="flex flex-col gap-6"
                   >
-                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">
-                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        <Bot className="w-6 h-6 text-blue-500" />
-                        AI Extraction Prompt
-                      </h3>
-                      <p className="text-slate-400 text-sm mb-4">This exact prompt is fed to Gemini 2.5 Flash via LangChain to parse the headless Chromium DOM.</p>
-                      <pre className="bg-slate-900/80 p-4 rounded-xl text-green-400 text-sm overflow-x-auto whitespace-pre-wrap font-mono border border-slate-700/50 shadow-inner">
-                        {`You are an expert technical recruiter and a strict gatekeeper extracting job information from webpage text.
-        
-Your task is to extract ONLY roles that strictly meet ALL the following MUST INCLUDE criteria, while strictly filtering out ANY roles that meet the MUST REJECT criteria.
+                    {!pipelineConfig ? (
+                      <div className="text-slate-400 text-center py-10">Loading configuration from database...</div>
+                    ) : (
+                      <>
+                        <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Bot className="w-6 h-6 text-blue-500" />
+                            AI Extraction Prompt
+                          </h3>
+                          <p className="text-slate-400 text-sm mb-4">This exact prompt is fed to Gemini 2.5 Flash via LangChain to parse the headless Chromium DOM. (Synced live from the backend python agent).</p>
+                          <pre className="bg-slate-900/80 p-4 rounded-xl text-green-400 text-sm overflow-x-auto whitespace-pre-wrap font-mono border border-slate-700/50 shadow-inner">
+                            {pipelineConfig.prompt}
+                          </pre>
+                        </div>
 
-MUST INCLUDE:
-1. The job or internship MUST be based in India.
-2. The job or internship MUST be tech-related (e.g., Software Engineering, AI/ML, Fleet Engineering, Data Analyst, Infrastructure Engineering, etc.).
-3. The target audience MUST strictly be 'Freshers' (Bachelors degree in Computer Science or related, 0 to 1 year of experience, no experience, or Internship).
-
-MUST REJECT:
-Explicitly ignore and reject any job posting that mentions requiring ANY of the following:
-- A 'PhD' or 'Master's Degree'
-- 'Senior', 'Lead', 'Manager', 'Staff', or 'Principal' in the title
-- '2+ years of experience' or more`}
-                      </pre>
-                    </div>
-
-                    <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">
-                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        <Building2 className="w-6 h-6 text-orange-500" />
-                        Automated Target Endpoints
-                      </h3>
-                      <p className="text-slate-400 text-sm mb-4">The Playwright agent automatically navigates and bypasses SPA rendering on these URLs daily.</p>
-                      <ul className="flex flex-col gap-3">
-                        {['Google', 'Apple', 'Amazon', 'Salesforce', 'Microsoft'].map(company => (
-                          <li key={company} className="flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700/30">
-                            <CheckCircle2 className="w-5 h-5 text-green-500" />
-                            <span className="font-semibold">{company} Careers Page</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                        <div className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6">
+                          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <Building2 className="w-6 h-6 text-orange-500" />
+                            Automated Target Endpoints
+                          </h3>
+                          <p className="text-slate-400 text-sm mb-4">The Playwright agent automatically navigates and bypasses SPA rendering on these URLs daily.</p>
+                          <ul className="flex flex-col gap-3">
+                            {pipelineConfig.targets.map((site, idx) => (
+                              <li key={idx} className="flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700/30">
+                                <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                <div className="flex flex-col truncate">
+                                  <span className="font-bold text-slate-200">{site.company} Careers</span>
+                                  <a href={site.url} target="_blank" rel="noreferrer" className="text-sm text-blue-400 hover:text-blue-300 truncate transition-colors">
+                                    {site.url}
+                                  </a>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
