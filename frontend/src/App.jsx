@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Briefcase, CheckSquare, 
   Building2, ExternalLink, ShieldCheck, 
-  Search, CheckCircle2, UserCircle, Command, Activity
+  Search, CheckCircle2, UserCircle, Command, 
+  Activity, Github
 } from 'lucide-react';
 import { supabase } from './supabase';
 
@@ -223,9 +224,17 @@ function App() {
           <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/80 to-fuchsia-50/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
-              <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Developer Details</h4>
-              <p className="text-sm font-bold text-slate-900 leading-tight">Manan Bhateja</p>
-              <p className="text-xs text-slate-500 mb-3 font-medium">NSUT IT 2027</p>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Developer Details</h4>
+              
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <p className="text-sm font-bold text-slate-900 leading-tight">Manan Bhateja</p>
+                  <p className="text-xs text-slate-500 font-medium">NSUT IT 2027</p>
+                </div>
+                <a href="https://github.com/manan576" target="_blank" rel="noreferrer" className="text-slate-400 hover:text-slate-900 transition-colors z-20">
+                  <Github size={18} />
+                </a>
+              </div>
               
               <p className="text-[11px] text-fuchsia-600 font-semibold leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
             </div>
