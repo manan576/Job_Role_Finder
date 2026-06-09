@@ -282,10 +282,10 @@ function App() {
                           let logoUrl = null;
                           try {
                             const domain = new URL(site.url).hostname.replace('www.', '').replace('jobs.', '').replace('careers.', '');
-                            logoUrl = `https://logo.clearbit.com/${domain}`;
+                            logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
                           } catch(e) {
                             const guessedDomain = site.company.toLowerCase().replace(/\s+/g, '') + '.com';
-                            logoUrl = `https://logo.clearbit.com/${guessedDomain}`;
+                            logoUrl = `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=128`;
                           }
                           return (
                             <a href={site.url.startsWith('http') ? site.url : `https://${site.url}`} target="_blank" rel="noreferrer" key={idx} className="flex items-center gap-4 bg-slate-50 hover:bg-white hover:shadow-md p-4 rounded-xl border border-slate-200 transition-all duration-300 group/item cursor-pointer">
@@ -356,8 +356,11 @@ const JobCard = ({ job, onUpdate }) => {
   let logoUrl = null;
   try {
     const domain = new URL(job.url).hostname.replace('www.', '').replace('jobs.', '').replace('careers.', '');
-    logoUrl = `https://logo.clearbit.com/${domain}`;
-  } catch(e) {}
+    logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  } catch(e) {
+    const guessedDomain = job.company.toLowerCase().replace(/\s+/g, '') + '.com';
+    logoUrl = `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=128`;
+  }
 
   return (
     <HoverCard className="p-8 flex flex-col justify-between min-h-[240px]">
