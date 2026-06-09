@@ -185,7 +185,7 @@ function App() {
           <div className="my-2 border-t border-slate-100 mx-2" />
           
           <a 
-            href="https://vercel.com/manans-projects-38b4f0e7/resumo" 
+            href="https://resumo-two.vercel.app/" 
             target="_blank" 
             rel="noreferrer"
             className="group relative w-full flex flex-col px-4 py-3 rounded-xl transition-all duration-500 font-medium text-slate-500 hover:bg-slate-900 overflow-hidden border border-transparent hover:border-slate-800 hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
@@ -220,20 +220,23 @@ function App() {
             </div>
           </div>
 
-          <div className="bg-slate-900 rounded-xl p-5 text-white shadow-xl relative overflow-hidden group border border-slate-800">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/80 to-fuchsia-50/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
-              <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Developer Details</h4>
-              <p className="text-[11px] text-indigo-300 font-semibold mb-4 leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Developer Details</h4>
+              <p className="text-sm font-bold text-slate-900 leading-tight">Manan Bhateja</p>
+              <p className="text-xs text-slate-500 mb-3 font-medium">NSUT IT 2027</p>
+              
+              <p className="text-[11px] text-fuchsia-600 font-semibold mb-4 leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
               
               <div className="flex flex-col gap-3">
                 <div className="flex gap-2 items-start">
-                  <span className="text-fuchsia-400 text-xs mt-0.5">🏆</span>
-                  <p className="text-[10px] text-slate-300 leading-snug font-medium">Awarded CVSPK Scholarship for 6th rank in IT Dept (2024–25)</p>
+                  <span className="text-xs mt-0.5">🏆</span>
+                  <p className="text-[10px] text-slate-600 leading-snug font-medium">Awarded CVSPK Scholarship for 6th rank in IT Dept (2024–25)</p>
                 </div>
                 <div className="flex gap-2 items-start">
-                  <span className="text-emerald-400 text-xs mt-0.5">🏅</span>
-                  <p className="text-[10px] text-slate-300 leading-snug font-medium">Winner, Smart India Hackathon 22-23 (Rs. 25K prize, 300+ teams)</p>
+                  <span className="text-xs mt-0.5">🏅</span>
+                  <p className="text-[10px] text-slate-600 leading-snug font-medium">Winner, Smart India Hackathon 22-23 (Rs. 25K prize, 300+ teams)</p>
                 </div>
               </div>
             </div>
