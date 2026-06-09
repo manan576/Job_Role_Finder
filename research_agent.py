@@ -52,7 +52,7 @@ def parse_jobs(content: str, company: str, run_id: int):
         return
 
     db = SessionLocal()
-    count = 0
+    new_jobs = []
     
     for title, url in matches:
         url = url.strip("[]()")
@@ -60,13 +60,14 @@ def parse_jobs(content: str, company: str, run_id: int):
         db.add(job)
         try:
             db.commit()
-            count += 1
+            new_jobs.append({"title": title, "url": url, "company": company})
         except IntegrityError:
             # Job URL already exists
             db.rollback()
             
     db.close()
-    print(f"Inserted {count} new jobs for {company} into the database.")
+    print(f"Inserted {len(new_jobs)} new jobs for {company} into the database.")
+    return new_jobs
 
 async def run_scraper():
     # Record the start of a run
@@ -139,7 +140,9 @@ async def run_scraper():
         print(f"Extracting data with Gemini for {company_name}...")
         result = await chain.ainvoke({"page_text": combined_text})
         
-        parse_jobs(result.content, company_name, run_id)
+        return parse_jobs(result.content, company_name, run_id)
+
+    all_new_jobs = []
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -148,7 +151,9 @@ async def run_scraper():
         
         for site in TARGET_SITES:
             try:
-                await extract_jobs(page, site["company"], site["url"])
+                new_jobs = await extract_jobs(page, site["company"], site["url"])
+                if new_jobs:
+                    all_new_jobs.extend(new_jobs)
             except Exception as e:
                 print(f"Failed to scrape {site['company']}: {e}")
             
@@ -166,6 +171,31 @@ async def run_scraper():
     db.close()
     
     print("Scraping completed!")
+
+    # Fire Slack Webhook Alert if new jobs found
+    if all_new_jobs:
+        try:
+            import requests
+            webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+            
+            if webhook_url:
+                message = f"*🤖 JobTracker found {len(all_new_jobs)} new tech roles!*\n\n"
+                for j in all_new_jobs:
+                    message += f"• *{j['company']}*: <{j['url']}|{j['title']}>\n"
+                
+                payload = {
+                    "text": message
+                }
+                
+                response = requests.post(webhook_url, json=payload)
+                if response.status_code == 200:
+                    print("Slack webhook alert sent successfully!")
+                else:
+                    print(f"Failed to send Slack alert. Status code: {response.status_code}")
+            else:
+                print("Skipping alert: SLACK_WEBHOOK_URL not set.")
+        except Exception as e:
+            print(f"Failed to send webhook alert: {e}")
 
 if __name__ == "__main__":
     asyncio.run(run_scraper())
