@@ -201,7 +201,7 @@ function App() {
             </div>
             <div className="relative z-10 h-0 group-hover:h-8 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
               <span className="text-[10px] text-slate-300 leading-tight block">
-                Check if your resume is ready for your dream job →
+                Check if your resume is ready for your dream job
               </span>
             </div>
           </a>
@@ -227,18 +227,7 @@ function App() {
               <p className="text-sm font-bold text-slate-900 leading-tight">Manan Bhateja</p>
               <p className="text-xs text-slate-500 mb-3 font-medium">NSUT IT 2027</p>
               
-              <p className="text-[11px] text-fuchsia-600 font-semibold mb-4 leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
-              
-              <div className="flex flex-col gap-3">
-                <div className="flex gap-2 items-start">
-                  <span className="text-xs mt-0.5">🏆</span>
-                  <p className="text-[10px] text-slate-600 leading-snug font-medium">Awarded CVSPK Scholarship for 6th rank in IT Dept (2024–25)</p>
-                </div>
-                <div className="flex gap-2 items-start">
-                  <span className="text-xs mt-0.5">🏅</span>
-                  <p className="text-[10px] text-slate-600 leading-snug font-medium">Winner, Smart India Hackathon 22-23 (Rs. 25K prize, 300+ teams)</p>
-                </div>
-              </div>
+              <p className="text-[11px] text-fuchsia-600 font-semibold leading-relaxed">Agentic AI • Machine Learning • DevOps • Pipelines</p>
             </div>
           </div>
         </div>
