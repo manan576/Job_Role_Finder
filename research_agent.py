@@ -155,6 +155,17 @@ async def run_scraper():
         return parse_jobs(result.content, company_name, run_id)
 
     all_new_jobs = []
+    print("Starting Nexus autonomous research agent...")
+    
+    # Optional: Send a "Pipeline Started" notification to Slack to test if the webhook works
+    webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+    if webhook_url:
+        try:
+            import requests
+            requests.post(webhook_url, json={"text": "🚀 *Nexus Pipeline Started:* Beginning autonomous web scraping run..."})
+        except Exception:
+            pass
+
     run_status = "COMPLETED"
 
     try:
