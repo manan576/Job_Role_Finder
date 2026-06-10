@@ -406,14 +406,8 @@ const StatCard = ({ icon, title, value, color }) => (
 );
 
 const JobCard = ({ job, onUpdate }) => {
-  let logoUrl = null;
-  try {
-    const domain = new URL(job.url).hostname.replace('www.', '').replace('jobs.', '').replace('careers.', '');
-    logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-  } catch(e) {
-    const guessedDomain = job.company.toLowerCase().replace(/\s+/g, '') + '.com';
-    logoUrl = `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=128`;
-  }
+  const guessedDomain = job.company.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  const logoUrl = `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=128`;
 
   return (
     <HoverCard className="p-8 flex flex-col justify-between min-h-[240px]">
@@ -450,11 +444,15 @@ const JobCard = ({ job, onUpdate }) => {
   );
 };
 
-const AppliedCard = ({ job }) => (
+const AppliedCard = ({ job }) => {
+  const guessedDomain = job.company.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  const logoUrl = `https://www.google.com/s2/favicons?domain=${guessedDomain}&sz=128`;
+
+  return (
   <HoverCard className="p-6 flex justify-between items-center group cursor-default">
     <div className="flex items-center gap-6">
-      <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-500 transition-colors duration-300">
-        <CheckCircle2 size={20} className="text-emerald-500 group-hover:text-white transition-colors" />
+      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200 overflow-hidden p-1">
+        <img src={logoUrl} alt={job.company} className="w-full h-full object-contain" onError={(e) => { e.target.style.display = 'none'; }} />
       </div>
       <div>
         <h3 className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors">{job.title}</h3>
@@ -468,8 +466,8 @@ const AppliedCard = ({ job }) => (
       </div>
     </div>
   </HoverCard>
-);
-
+  );
+};
 const EmptyState = ({ title, subtitle }) => (
   <div className="col-span-full py-24 flex flex-col items-center justify-center text-center">
     <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-6 shadow-inner">
