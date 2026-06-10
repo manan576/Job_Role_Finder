@@ -205,7 +205,7 @@ function App() {
                 </span>
               </div>
               <span className="text-[8px] uppercase tracking-widest text-indigo-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                Built by same dev
+                Built by the same dev
               </span>
             </div>
             <div className="relative z-10 h-0 group-hover:h-8 transition-all duration-500 opacity-0 group-hover:opacity-100 overflow-hidden mt-0 group-hover:mt-2">
