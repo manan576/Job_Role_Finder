@@ -9,6 +9,11 @@
   }
 }
 
+/* Safe area padding for bottom nav on notched phones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Custom scrollbar for Webkit */
 ::-webkit-scrollbar {
   width: 6px;
